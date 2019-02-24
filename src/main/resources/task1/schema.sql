@@ -20,3 +20,5 @@ CREATE TABLE IF NOT EXISTS students (
 );
 
 INSERT INTO students VALUES (110, 'Artur', 'Mustaev', '11-502');
+
+-- pg_dump -h localhost -U postgres isearch > dump.sql

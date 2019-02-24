@@ -31,6 +31,6 @@ public class ArticleDao {
     }
 
     public List<Article> getAllArticles() {
-        return jdbcTemplate.query(GET_ALL_SQL, new BeanPropertyRowMapper<Article>(Article.class));
+        return jdbcTemplate.query(GET_ALL_SQL, new BeanPropertyRowMapper<>(Article.class));
     }
 }
