@@ -31,16 +31,11 @@ public class StemDao {
             String key = entry.getKey();
             for (String s : entry.getValue()) {
                 query
-                        .append(' ')
-                        .append('(')
-                        .append('\'')
+                        .append(" ('")
                         .append(key)
-                        .append('\'')
-                        .append(',').append(' ')
-                        .append('\'')
+                        .append("', '")
                         .append(s)
-                        .append('\'')
-                        .append(')').append(',');
+                        .append("'),");
             }
         }
         query.deleteCharAt(query.length() - 1);

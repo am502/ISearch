@@ -2,6 +2,7 @@ package ru.itis.Task4;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.itis.config.DataConfig;
+import ru.itis.models.ArticleTerm;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -16,9 +17,6 @@ public class Dao {
     private static final String GET_ARTICLE_IDS_WITH_WORD_COUNT = "SELECT article_id, COUNT(term) " +
             "AS cnt FROM words_porter GROUP BY (article_id);";
     private static final String GET_WORD_IDS_WITH_ARTICLE_IDS = "SELECT term_id, article_id FROM article_term;";
-
-    private static final String UPDATE_ARTICLE_TERM = "UPDATE article_term SET tf_idf = ? WHERE term_id = ?::UUID " +
-            "AND article_id = ?::UUID;";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -57,7 +55,17 @@ public class Dao {
         });
     }
 
-    public void updateArticleTerm(double tfIdf, String termId, String articleId) {
-        jdbcTemplate.update(UPDATE_ARTICLE_TERM, tfIdf, termId, articleId);
+    public void updateArticleTerm(List<ArticleTerm> articleTerms) {
+        StringBuilder query = new StringBuilder();
+        for (ArticleTerm articleTerm : articleTerms) {
+            query.append("UPDATE article_term SET tf_idf = ");
+            query.append(articleTerm.getTfIdf());
+            query.append(" WHERE article_id = '");
+            query.append(articleTerm.getArticleId());
+            query.append("' AND term_id = '");
+            query.append(articleTerm.getTermId());
+            query.append("';");
+        }
+        jdbcTemplate.update(query.toString());
     }
 }

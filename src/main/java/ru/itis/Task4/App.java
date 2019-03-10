@@ -1,7 +1,10 @@
 package ru.itis.Task4;
 
+import ru.itis.models.ArticleTerm;
 import ru.itis.util.Constants;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +16,8 @@ public class App {
 
         Map<String, List<String>> wordIdsWithArticleIds = dao.getWordIdsWithArticleIds();
 
+        List<ArticleTerm> articleTerms = new ArrayList<>();
+
         for (Map.Entry<String, Integer> entry : articleIdsWithWordCount.entrySet()) {
             for (Map.Entry<String, List<String>> wordEntry : wordIdsWithArticleIds.entrySet()) {
                 int count = 0;
@@ -22,9 +27,12 @@ public class App {
                     }
                 }
                 double tf = (double) count / entry.getValue();
-                double idf = Math.log((double) Constants.ARTICLES_QUANTITY / wordEntry.getValue().size());
-                dao.updateArticleTerm(tf * idf, wordEntry.getKey(), entry.getKey());
+                double idf = Math.log((double) Constants.ARTICLES_QUANTITY /
+                        new HashSet<>(wordEntry.getValue()).size());
+                articleTerms.add(new ArticleTerm(entry.getKey(), wordEntry.getKey(), tf * idf));
             }
         }
+
+        dao.updateArticleTerm(articleTerms);
     }
 }
