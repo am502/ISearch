@@ -4,14 +4,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import ru.itis.dao.ArticleDao;
 import ru.itis.models.Article;
+import ru.itis.util.Constants;
 import us.codecraft.xsoup.Xsoup;
 
 import java.io.IOException;
 import java.util.List;
 
 public class App {
-    private static final int ARTICLES_QUANTITY = 30;
-
     public static void main(String[] args) {
         ArticleDao articleDao = new ArticleDao();
 
@@ -25,7 +24,7 @@ public class App {
         List<String> hrefs = Xsoup.compile("//a[@class='item story-container']/@href")
                 .evaluate(mainDoc).list();
 
-        for (int i = 0; i < ARTICLES_QUANTITY; i++) {
+        for (int i = 0; i < Constants.ARTICLES_QUANTITY; i++) {
             String url = hrefs.get(i);
             Document doc = null;
             try {

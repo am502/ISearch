@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.itis.config.DataConfig;
 import ru.itis.models.Article;
+import ru.itis.util.Constants;
 
 import java.util.List;
 
@@ -11,8 +12,6 @@ public class ArticleDao {
     private static final String INSERT_SQL = "INSERT INTO articles (title, keywords, content, url, student_id) " +
             "VALUES (?, ?, ?, ?, ?);";
     private static final String GET_ALL_SQL = "SELECT * FROM articles;";
-
-    private static final int STUDENT_ID = 110;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -27,7 +26,7 @@ public class ArticleDao {
                 article.getKeywords(),
                 article.getContent(),
                 article.getUrl(),
-                STUDENT_ID);
+                Constants.STUDENT_ID);
     }
 
     public List<Article> getAllArticles() {

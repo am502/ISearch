@@ -10,7 +10,7 @@ public class Dao {
     private static final String GET_SORTED_WORDS_END = ") GROUP BY (term) ORDER BY (COUNT(term));";
 
     private static final String GET_URLS_PART = "SELECT a.url FROM articles a WHERE id IN " +
-            "(SELECT d.article_id FROM doc_term d " +
+            "(SELECT d.article_id FROM article_term d " +
             "INNER JOIN terms_list t ON d.term_id = t.term_id WHERE t.term_text = '";
 
     private JdbcTemplate jdbcTemplate;
