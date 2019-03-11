@@ -3,8 +3,8 @@ package ru.itis.dao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.itis.config.DataConfig;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class StemDao {
     private static final String INSERT_MYSTEM_SQL = "INSERT INTO words_mystem (term, article_id) VALUES";
@@ -17,17 +17,17 @@ public class StemDao {
         jdbcTemplate = dataConfig.jdbcTemplate();
     }
 
-    public void insertPorterStem(Map<String, Set<String>> words) {
+    public void insertPorterStem(Map<String, List<String>> words) {
         insertStem(INSERT_PORTERSTEM_SQL, words);
     }
 
-    public void insertMyStem(Map<String, Set<String>> words) {
+    public void insertMyStem(Map<String, List<String>> words) {
         insertStem(INSERT_MYSTEM_SQL, words);
     }
 
-    private void insertStem(String sql, Map<String, Set<String>> words) {
+    private void insertStem(String sql, Map<String, List<String>> words) {
         StringBuilder query = new StringBuilder(sql);
-        for (Map.Entry<String, Set<String>> entry : words.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : words.entrySet()) {
             String key = entry.getKey();
             for (String s : entry.getValue()) {
                 query

@@ -26,7 +26,7 @@ public class App {
 
         List<String> stopWords = new ArrayList<>();
 
-        Map<String, Set<String>> words = new HashMap<>();
+        Map<String, List<String>> words = new HashMap<>();
 
         Scanner scanner = null;
         try {
@@ -49,7 +49,7 @@ public class App {
                     if (words.containsKey(word)) {
                         words.get(word).add(articleId);
                     } else {
-                        Set<String> ids = new HashSet<>();
+                        List<String> ids = new ArrayList<>();
                         ids.add(articleId);
                         words.put(word, ids);
                     }
@@ -64,21 +64,21 @@ public class App {
         stemDao.insertMyStem(processMyStem(words));
     }
 
-    private static Map<String, Set<String>> processPorterStem(Map<String, Set<String>> words) {
+    private static Map<String, List<String>> processPorterStem(Map<String, List<String>> words) {
         SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.RUSSIAN);
-        Map<String, Set<String>> result = new HashMap<>();
-        for (Map.Entry<String, Set<String>> entry : words.entrySet()) {
+        Map<String, List<String>> result = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : words.entrySet()) {
             String word = stemmer.stem(entry.getKey()).toString();
             result.put(word, entry.getValue());
         }
         return result;
     }
 
-    private static Map<String, Set<String>> processMyStem(Map<String, Set<String>> words) {
+    private static Map<String, List<String>> processMyStem(Map<String, List<String>> words) {
         MyStem stemmer = new Factory("-igd --eng-gr --format json --weight")
                 .newMyStem("3.0", Option.empty()).get();
-        Map<String, Set<String>> result = new HashMap<>();
-        for (Map.Entry<String, Set<String>> entry : words.entrySet()) {
+        Map<String, List<String>> result = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : words.entrySet()) {
             try {
                 Iterable<Info> infos = JavaConversions.asJavaIterable(stemmer
                         .analyze(Request.apply(entry.getKey()))

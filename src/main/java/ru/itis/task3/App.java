@@ -9,7 +9,7 @@ public class App {
     public static void main(String[] args) {
         Dao dao = new Dao();
 
-        String text = "Карта Деньги Перифирия";
+        String text = "Обзор зла";
 
         List<String> processedWords = processPorterStem(text.split(" "));
 
