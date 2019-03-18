@@ -29,7 +29,12 @@ public class App {
                 double tf = (double) count / entry.getValue();
                 double idf = Math.log((double) Constants.ARTICLES_QUANTITY /
                         new HashSet<>(wordEntry.getValue()).size());
-                articleTerms.add(new ArticleTerm(entry.getKey(), wordEntry.getKey(), tf * idf));
+                articleTerms.add(ArticleTerm.builder()
+                        .articleId(entry.getKey())
+                        .termId(wordEntry.getKey())
+                        .tfIdf(tf * idf)
+                        .idf(idf)
+                        .build());
             }
         }
 

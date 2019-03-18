@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Dao {
-    private static final String DROP_COLUMN = "ALTER TABLE article_term DROP COLUMN IF EXISTS tf_idf;";
-    private static final String ADD_COLUMN = "ALTER TABLE article_term ADD COLUMN IF NOT EXISTS tf_idf FLOAT;";
+    private static final String ADD_COLUMN_TF_IDF = "ALTER TABLE article_term ADD COLUMN IF NOT EXISTS tf_idf FLOAT;";
+    private static final String ADD_COLUMN_IDF = "ALTER TABLE article_term ADD COLUMN IF NOT EXISTS idf FLOAT;";
 
     private static final String GET_ARTICLE_IDS_WITH_WORD_COUNT = "SELECT article_id, COUNT(term) " +
             "AS cnt FROM words_porter GROUP BY (article_id);";
@@ -23,8 +23,8 @@ public class Dao {
     public Dao() {
         DataConfig dataConfig = new DataConfig();
         jdbcTemplate = dataConfig.jdbcTemplate();
-        jdbcTemplate.update(DROP_COLUMN);
-        jdbcTemplate.update(ADD_COLUMN);
+        jdbcTemplate.update(ADD_COLUMN_TF_IDF);
+        jdbcTemplate.update(ADD_COLUMN_IDF);
     }
 
     public Map<String, Integer> getArticleIdsWithWordCount() {
@@ -60,6 +60,8 @@ public class Dao {
         for (ArticleTerm articleTerm : articleTerms) {
             query.append("UPDATE article_term SET tf_idf = ");
             query.append(articleTerm.getTfIdf());
+            query.append(", idf = ");
+            query.append(articleTerm.getIdf());
             query.append(" WHERE article_id = '");
             query.append(articleTerm.getArticleId());
             query.append("' AND term_id = '");

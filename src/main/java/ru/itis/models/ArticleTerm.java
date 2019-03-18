@@ -13,4 +13,6 @@ public class ArticleTerm {
     private String articleId;
     private String termId;
     private double tfIdf;
+    private double idf;
+    private String term;
 }
