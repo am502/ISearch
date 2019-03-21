@@ -11,9 +11,9 @@ CREATE TABLE article_term (
   term_id uuid
 );
 
-INSERT INTO terms_list (term_id, term_text)
-  SELECT DISTINCT ON (w.term) w.id, w.term FROM words_porter w ORDER BY (w.term) ASC;
+INSERT INTO terms_list (term_text)
+  SELECT DISTINCT ON (p.term) p.term FROM words_porter p ORDER BY (p.term) ASC;
 
 INSERT INTO article_term (article_id, term_id)
-  SELECT DISTINCT ON (w.article_id, t.term_id) w.article_id, t.term_id FROM words_porter w
-  INNER JOIN terms_list t ON t.term_text = w.term;
+  SELECT DISTINCT ON (p.article_id, t.term_id) p.article_id, t.term_id FROM words_porter p
+  INNER JOIN terms_list t ON t.term_text = p.term;

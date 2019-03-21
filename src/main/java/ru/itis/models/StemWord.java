@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Article {
+public class StemWord {
     private String id;
-    private String title;
-    private String keywords;
-    private String content;
-    private String url;
-    private int studentId;
+    private String term;
+    private String articleId;
 }

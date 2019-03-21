@@ -2,7 +2,7 @@ package ru.itis.task5;
 
 import ru.itis.models.Article;
 import ru.itis.models.ArticleTerm;
-import ru.itis.util.Stemmer;
+import ru.itis.util.StemProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,10 @@ public class App {
 
         String text = "Обзор хорошей игры";
 
-        List<String> processedWords = Stemmer.processPorterStem(text.split(" "));
+        List<String> processedWords = new ArrayList<>();
+        for (String word : text.split(" ")) {
+            processedWords.add(StemProcessor.getInstance().processPorterStem(word.toLowerCase()));
+        }
 
         List<Article> articles = dao.getArticleIdsByWords(processedWords);
 

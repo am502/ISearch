@@ -10,7 +10,7 @@ import us.codecraft.xsoup.Xsoup;
 import java.io.IOException;
 import java.util.List;
 
-public class App {
+public class SiteParser {
     public static void main(String[] args) {
         ArticleDao articleDao = new ArticleDao();
 
@@ -43,9 +43,10 @@ public class App {
                     .keywords(keywords)
                     .content(content)
                     .url(url)
+                    .studentId(Constants.STUDENT_ID)
                     .build();
 
-            articleDao.insert(article);
+            articleDao.insertArticle(article);
         }
     }
 }

@@ -16,8 +16,7 @@ public class Dao {
     private JdbcTemplate jdbcTemplate;
 
     public Dao() {
-        DataConfig dataConfig = new DataConfig();
-        jdbcTemplate = dataConfig.jdbcTemplate();
+        jdbcTemplate = new JdbcTemplate(DataConfig.getInstance().getDataSource());
     }
 
     public List<String> getSortedWords(List<String> words) {

@@ -21,8 +21,7 @@ public class Dao {
     private JdbcTemplate jdbcTemplate;
 
     public Dao() {
-        DataConfig dataConfig = new DataConfig();
-        jdbcTemplate = dataConfig.jdbcTemplate();
+        jdbcTemplate = new JdbcTemplate(DataConfig.getInstance().getDataSource());
     }
 
     public List<Article> getArticleIdsByWords(List<String> words) {
