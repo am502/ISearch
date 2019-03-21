@@ -18,15 +18,15 @@ public class StemDao {
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(DataConfig.getInstance().getDataSource());
     }
 
-    public void insertPorterStem(List<StemWord> stemWords) {
-        insertStem(String.format(INSERT_STEM_WORD, "words_porter"), stemWords);
+    public void insertWordsPorterStem(List<StemWord> stemWords) {
+        insertWordsStem(String.format(INSERT_STEM_WORD, "words_porter"), stemWords);
     }
 
-    public void insertMyStem(List<StemWord> stemWords) {
-        insertStem(String.format(INSERT_STEM_WORD, "words_mystem"), stemWords);
+    public void insertWordsMyStem(List<StemWord> stemWords) {
+        insertWordsStem(String.format(INSERT_STEM_WORD, "words_mystem"), stemWords);
     }
 
-    private void insertStem(String query, List<StemWord> stemWords) {
+    private void insertWordsStem(String query, List<StemWord> stemWords) {
         SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(stemWords.toArray());
         namedParameterJdbcTemplate.batchUpdate(query, batch);
     }

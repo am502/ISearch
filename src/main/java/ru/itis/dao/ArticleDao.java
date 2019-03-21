@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import ru.itis.config.DataConfig;
 import ru.itis.models.Article;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ArticleDao {
     private static final String INSERT_ARTICLE = "INSERT INTO articles (title, keywords, content, url, student_id) " +
@@ -16,6 +18,8 @@ public class ArticleDao {
     private static final String GET_URLS = "SELECT a.url FROM articles a WHERE a.id IN " +
             "(SELECT at.article_id FROM article_term at INNER JOIN terms_list t ON at.term_id = t.term_id " +
             "WHERE t.term_text = '";
+    private static final String GET_ARTICLE_IDS_WITH_WORD_COUNT = "SELECT article_id, COUNT(term) " +
+            "AS cnt FROM words_porter GROUP BY (article_id);";
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -56,5 +60,15 @@ public class ArticleDao {
         query.append("');");
         return namedParameterJdbcTemplate
                 .getJdbcTemplate().queryForList(query.toString(), String.class);
+    }
+
+    public Map<String, Integer> getArticleIdsWithWordCount() {
+        return namedParameterJdbcTemplate.getJdbcTemplate().query(GET_ARTICLE_IDS_WITH_WORD_COUNT, rs -> {
+            Map<String, Integer> result = new HashMap<>();
+            while (rs.next()) {
+                result.put(rs.getString("article_id"), rs.getInt("cnt"));
+            }
+            return result;
+        });
     }
 }

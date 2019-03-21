@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TextProcessor {
+public class ContentParser {
     public static void main(String[] args) {
         ArticleDao articleDao = new ArticleDao();
 
@@ -56,7 +56,7 @@ public class TextProcessor {
 
         StemDao stemDao = new StemDao();
 
-        stemDao.insertPorterStem(wordsPorterStem);
-        stemDao.insertMyStem(wordsMyStem);
+        stemDao.insertWordsPorterStem(wordsPorterStem);
+        stemDao.insertWordsMyStem(wordsMyStem);
     }
 }
