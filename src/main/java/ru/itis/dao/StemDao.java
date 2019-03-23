@@ -1,5 +1,6 @@
 package ru.itis.dao;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -11,6 +12,7 @@ import java.util.List;
 public class StemDao {
     private static final String INSERT_STEM_WORD = "INSERT INTO %s (term, article_id) " +
             "VALUES (:term, :articleId::UUID);";
+    private static final String GET_ALL_PORTER_WORDS = "SELECT * FROM words_porter;";
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -29,5 +31,9 @@ public class StemDao {
     private void insertWordsStem(String query, List<StemWord> stemWords) {
         SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(stemWords.toArray());
         namedParameterJdbcTemplate.batchUpdate(query, batch);
+    }
+
+    public List<StemWord> getAllPorterWords() {
+        return namedParameterJdbcTemplate.query(GET_ALL_PORTER_WORDS, new BeanPropertyRowMapper<>(StemWord.class));
     }
 }

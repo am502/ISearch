@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ArticleTerm {
-    private String articleId;
+public class Term {
     private String termId;
-    private double tfIdf;
-    private double idf;
+    private String termText;
 }
