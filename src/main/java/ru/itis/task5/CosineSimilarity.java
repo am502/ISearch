@@ -28,8 +28,9 @@ public class CosineSimilarity {
         ArticleTermDao articleTermDao = new ArticleTermDao();
 
         Map<String, Map<String, Double>> articleUrlWithWordAndTfIdf = new HashMap<>();
+        Map<String, Double> termFromQueryWithTfIdf = new HashMap<>();
 
-        Map<String, Double> termWithIdf = new HashMap<>();
+        double b2 = 0;
         for (ModifiedArticleTerm articleTerm : articleTermDao.getAllModifiedArticleTerms()) {
             String articleUrl = articleTerm.getArticleUrl();
             if (articleUrlWithWordAndTfIdf.containsKey(articleUrl)) {
@@ -41,25 +42,16 @@ public class CosineSimilarity {
             }
 
             String term = articleTerm.getTerm();
-            if (!termWithIdf.containsKey(term)) {
-                termWithIdf.put(term, articleTerm.getIdf());
-            }
-        }
-
-        double b2 = 0;
-        Map<String, Double> termFromQueryWithTfIdf = new HashMap<>();
-        for (Map.Entry<String, Double> entry : termWithIdf.entrySet()) {
-            String term = entry.getKey();
-            if (processedWords.containsKey(term)) {
+            if (!termFromQueryWithTfIdf.containsKey(term) && processedWords.containsKey(term)) {
                 double tf = (double) processedWords.get(term) / queryWordCount;
-                double tfIdf = tf * entry.getValue();
+                double tfIdf = tf * articleTerm.getIdf();
                 termFromQueryWithTfIdf.put(term, tfIdf);
                 b2 += (tfIdf * tfIdf);
             }
         }
         b2 = Math.sqrt(b2);
 
-        Map<String, Double> score = new HashMap<>();
+        Map<String, Double> scores = new HashMap<>();
         for (Map.Entry<String, Map<String, Double>> entry : articleUrlWithWordAndTfIdf.entrySet()) {
             double ab = 0;
             double a2 = 0;
@@ -71,10 +63,10 @@ public class CosineSimilarity {
                 }
             }
             a2 = Math.sqrt(a2);
-            score.put(entry.getKey(), ab / (a2 * b2));
+            scores.put(entry.getKey(), ab / a2 / b2);
         }
 
-        score.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
-                .forEach(e -> System.out.println(e.getKey() + " " + e.getValue()));
+        scores.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
+                .filter(e -> e.getValue() != 0.0).forEach(e -> System.out.println(e.getValue() + " " + e.getKey()));
     }
 }

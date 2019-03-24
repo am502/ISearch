@@ -19,7 +19,7 @@ public class TfIdf {
 
         List<ArticleTerm> articleTerms = new ArrayList<>();
         for (Map.Entry<String, Map<String, Integer>> wordEntry : articleTermDao
-                .getWordIdsWithArticleIds().entrySet()) {
+                .getWordsWithArticleIds("term_id").entrySet()) {
             double idf = Math.log((double) Constants.ARTICLES_QUANTITY / wordEntry.getValue().size());
             for (Map.Entry<String, Integer> articleEntry : wordEntry.getValue().entrySet()) {
                 double tf = (double) articleEntry.getValue() / articleIdsWithWordCount.get(articleEntry.getKey());

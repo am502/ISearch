@@ -15,7 +15,7 @@ import java.util.Map;
 public class ArticleTermDao {
     private static final String UPDATE_ARTICLE_TERM = "UPDATE article_term SET tf_idf = :tfIdf, idf = :idf " +
             "WHERE article_id = :articleId::UUID AND term_id = :termId::UUID;";
-    private static final String GET_WORD_IDS_WITH_ARTICLE_IDS = "SELECT t.term_id, p.article_id " +
+    private static final String GET_WORDS_WITH_ARTICLE_IDS = "SELECT t.term_id, t.term_text, p.article_id " +
             "FROM words_porter p INNER JOIN terms_list t ON t.term_text = p.term;";
     private static final String GET_ALL_MODIFIED_ARTICLE_TERMS = "SELECT at.tf_idf, at.idf, " +
             "a.url AS article_url, t.term_text AS term FROM article_term at " +
@@ -32,21 +32,21 @@ public class ArticleTermDao {
         namedParameterJdbcTemplate.batchUpdate(UPDATE_ARTICLE_TERM, batch);
     }
 
-    public Map<String, Map<String, Integer>> getWordIdsWithArticleIds() {
-        return namedParameterJdbcTemplate.getJdbcTemplate().query(GET_WORD_IDS_WITH_ARTICLE_IDS, rs -> {
+    public Map<String, Map<String, Integer>> getWordsWithArticleIds(String termField) {
+        return namedParameterJdbcTemplate.getJdbcTemplate().query(GET_WORDS_WITH_ARTICLE_IDS, rs -> {
             Map<String, Map<String, Integer>> result = new HashMap<>();
             while (rs.next()) {
-                String termId = rs.getString("term_id");
+                String term = rs.getString(termField);
                 String articleId = rs.getString("article_id");
-                if (result.containsKey(termId)) {
-                    Map<String, Integer> article = result.get(termId);
+                if (result.containsKey(term)) {
+                    Map<String, Integer> article = result.get(term);
                     if (article.containsKey(articleId)) {
                         article.put(articleId, article.get(articleId) + 1);
                     } else {
                         article.put(articleId, 1);
                     }
                 } else {
-                    result.put(termId, new HashMap<String, Integer>() {{
+                    result.put(term, new HashMap<String, Integer>() {{
                         put(articleId, 1);
                     }});
                 }
