@@ -46,7 +46,7 @@ public class OkapiBM25 {
 
                 int n = articleIdsByProcessedWord.size();
                 double idf = Math.log((Constants.ARTICLES_QUANTITY - n + IDF_SMOOTH) / (n + IDF_SMOOTH));
-                if (idf < 0) {
+                if (idf < EPS) {
                     idf = EPS;
                 }
 
@@ -56,11 +56,13 @@ public class OkapiBM25 {
                 double dividend = tf * (K1 + 1);
 
                 double divisor = tf + K1 * (1 - B + B * articleEntry.getValue() / avg);
+
                 score += (idf * dividend / divisor);
             }
             scores.put(articleEntry.getKey(), score);
         }
 
-        scores.entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue()));
+        scores.entrySet().forEach(e ->
+                System.out.println(articleDao.getArticleById(e.getKey()).getUrl() + " " + e.getValue()));
     }
 }

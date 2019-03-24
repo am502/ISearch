@@ -2,6 +2,7 @@ package ru.itis.dao;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import ru.itis.config.DataConfig;
@@ -20,6 +21,7 @@ public class ArticleDao {
             "WHERE t.term_text = '";
     private static final String GET_ARTICLE_IDS_WITH_WORD_COUNT = "SELECT article_id, COUNT(term) " +
             "AS cnt FROM words_porter GROUP BY (article_id);";
+    private static final String GET_ARTICLE_BY_ID = "SELECT * FROM articles WHERE id = :id::UUID;";
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -70,5 +72,10 @@ public class ArticleDao {
             }
             return result;
         });
+    }
+
+    public Article getArticleById(String id) {
+        return namedParameterJdbcTemplate.queryForObject(GET_ARTICLE_BY_ID, new MapSqlParameterSource()
+                .addValue("id", id), new BeanPropertyRowMapper<>(Article.class));
     }
 }
