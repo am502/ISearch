@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class CosineSimilarity {
     public static void main(String[] args) {
+        ArticleTermDao articleTermDao = new ArticleTermDao();
+
         String text = "Обзор хорошей игры";
 
         String[] words = text.split(" ");
@@ -24,8 +26,6 @@ public class CosineSimilarity {
                 processedWords.put(processedWord, 1);
             }
         }
-
-        ArticleTermDao articleTermDao = new ArticleTermDao();
 
         Map<String, Map<String, Double>> articleUrlWithWordAndTfIdf = new HashMap<>();
         Map<String, Double> termFromQueryWithTfIdf = new HashMap<>();

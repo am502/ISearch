@@ -8,14 +8,14 @@ import java.util.List;
 
 public class BooleanSearch {
     public static void main(String[] args) {
+        ArticleDao articleDao = new ArticleDao();
+
         String text = "Обзор хорошей игры";
 
         List<String> processedWords = new ArrayList<>();
         for (String word : text.split(" ")) {
             processedWords.add(StemProcessor.getInstance().processPorterStem(word.toLowerCase()));
         }
-
-        ArticleDao articleDao = new ArticleDao();
 
         articleDao.getUrlsByWords(processedWords).forEach(System.out::println);
     }

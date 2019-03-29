@@ -1,7 +1,7 @@
 package ru.itis.task6;
 
 import ru.itis.dao.ArticleDao;
-import ru.itis.dao.ArticleTermDao;
+import ru.itis.dao.TermDao;
 import ru.itis.util.Constants;
 import ru.itis.util.StemProcessor;
 
@@ -18,14 +18,13 @@ public class OkapiBM25 {
     private static final double EPS = 0.01;
 
     public static void main(String[] args) {
+        ArticleDao articleDao = new ArticleDao();
+        TermDao termDao = new TermDao();
+
         String text = "Обзор хорошей игры";
 
         List<String> processedWords = Arrays.stream(text.split(" ")).map(e ->
                 StemProcessor.getInstance().processPorterStem(e.toLowerCase())).collect(Collectors.toList());
-
-        ArticleDao articleDao = new ArticleDao();
-
-        ArticleTermDao articleTermDao = new ArticleTermDao();
 
         Map<String, Integer> articleIdsWithWordCount = articleDao.getArticleIdsWithWordCount();
         double avg = 0;
@@ -34,8 +33,7 @@ public class OkapiBM25 {
         }
         avg /= Constants.ARTICLES_QUANTITY;
 
-        Map<String, Map<String, Integer>> wordsWithArticleIds = articleTermDao
-                .getWordsWithArticleIds("term_text");
+        Map<String, Map<String, Integer>> wordsWithArticleIds = termDao.getTermTextsWithArticleIds();
 
         Map<String, Double> scores = new HashMap<>();
         for (Map.Entry<String, Integer> articleEntry : articleIdsWithWordCount.entrySet()) {
@@ -62,7 +60,6 @@ public class OkapiBM25 {
             scores.put(articleEntry.getKey(), score);
         }
 
-        scores.entrySet().forEach(e ->
-                System.out.println(articleDao.getArticleById(e.getKey()).getUrl() + " " + e.getValue()));
+        scores.forEach((key, value) -> System.out.println(articleDao.getArticleById(key).getUrl() + " " + value));
     }
 }

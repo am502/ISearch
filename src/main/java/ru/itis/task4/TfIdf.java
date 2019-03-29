@@ -2,6 +2,7 @@ package ru.itis.task4;
 
 import ru.itis.dao.ArticleDao;
 import ru.itis.dao.ArticleTermDao;
+import ru.itis.dao.TermDao;
 import ru.itis.models.ArticleTerm;
 import ru.itis.util.Constants;
 
@@ -12,19 +13,18 @@ import java.util.Map;
 public class TfIdf {
     public static void main(String[] args) {
         ArticleDao articleDao = new ArticleDao();
+        ArticleTermDao articleTermDao = new ArticleTermDao();
+        TermDao termDao = new TermDao();
 
         Map<String, Integer> articleIdsWithWordCount = articleDao.getArticleIdsWithWordCount();
 
-        ArticleTermDao articleTermDao = new ArticleTermDao();
-
         List<ArticleTerm> articleTerms = new ArrayList<>();
-        for (Map.Entry<String, Map<String, Integer>> wordEntry : articleTermDao
-                .getWordsWithArticleIds("term_id").entrySet()) {
-            double idf = Math.log((double) Constants.ARTICLES_QUANTITY / wordEntry.getValue().size());
-            for (Map.Entry<String, Integer> articleEntry : wordEntry.getValue().entrySet()) {
+        for (Map.Entry<String, Map<String, Integer>> termEntry : termDao.getTermIdsWithArticleIds().entrySet()) {
+            double idf = Math.log((double) Constants.ARTICLES_QUANTITY / termEntry.getValue().size());
+            for (Map.Entry<String, Integer> articleEntry : termEntry.getValue().entrySet()) {
                 double tf = (double) articleEntry.getValue() / articleIdsWithWordCount.get(articleEntry.getKey());
                 ArticleTerm articleTerm = ArticleTerm.builder()
-                        .termId(wordEntry.getKey())
+                        .termId(termEntry.getKey())
                         .articleId(articleEntry.getKey())
                         .tfIdf(tf * idf)
                         .idf(idf)
@@ -32,6 +32,7 @@ public class TfIdf {
                 articleTerms.add(articleTerm);
             }
         }
+
         articleTermDao.updateArticleTerms(articleTerms);
     }
 }
