@@ -5,8 +5,12 @@ import Jama.SingularValueDecomposition;
 import ru.itis.dao.ArticleDao;
 import ru.itis.dao.TermDao;
 import ru.itis.models.Article;
+import ru.itis.util.StemProcessor;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LSI {
     private static final int K = 2;
@@ -36,28 +40,26 @@ public class LSI {
 
     public static void main(String[] args) {
         LSI lsi = new LSI();
+        String[] articleIds = lsi.getArticleIds();
+        String[] terms = lsi.getTerms();
+        double[][] sourceMatrix = lsi.getMatrix();
 
-        double[][] exampleQuery = {{0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1}};
+        int termsCount = terms.length;
+        int documentsCount = articleIds.length;
 
-        double[][] exampleArray = {
-                {1, 1, 1},
-                {0, 1, 1},
-                {1, 0, 0},
-                {0, 1, 0},
-                {1, 0, 0},
-                {1, 0, 1},
-                {1, 1, 1},
-                {1, 1, 1},
-                {1, 0, 1},
-                {0, 2, 0},
-                {0, 1, 1}
-        };
+        String text = "Обзор хорошей игры";
+        Set<String> processedWords = Arrays.stream(text.split(" ")).map(e ->
+                StemProcessor.getInstance().processPorterStem(e.toLowerCase())).collect(Collectors.toSet());
 
-        int termsCount = exampleArray.length;
-        int documentsCount = exampleArray[0].length;
+        double[][] query = new double[1][termsCount];
+        for (int i = 0; i < termsCount; i++) {
+            if (processedWords.contains(terms[i])) {
+                query[0][i] = 1;
+            }
+        }
 
-        Matrix q = new Matrix(exampleQuery);
-        Matrix matrix = new Matrix(exampleArray);
+        Matrix matrix = new Matrix(sourceMatrix);
+        Matrix q = new Matrix(query);
 
         SingularValueDecomposition svd = matrix.svd();
 
@@ -73,7 +75,7 @@ public class LSI {
 
         for (int i = 0; i < documentsCount; i++) {
             Matrix d = vtk.getMatrix(0, K - 1, i, i).transpose();
-            System.out.println(cosine(result.getArrayCopy()[0], d.getArrayCopy()[0]));
+            System.out.println(articleIds[i] + ": " + cosine(result.getArrayCopy()[0], d.getArrayCopy()[0]));
         }
     }
 
