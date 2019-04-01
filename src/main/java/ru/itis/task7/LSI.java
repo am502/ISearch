@@ -6,10 +6,11 @@ import ru.itis.dao.ArticleDao;
 import ru.itis.dao.TermDao;
 import ru.itis.models.Article;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class LSI {
+    private static final int K = 2;
+
     private String[] articleIds;
     private String[] terms;
     private double[][] matrix;
@@ -64,23 +65,28 @@ public class LSI {
         Matrix s = svd.getS();
         Matrix vt = svd.getV().transpose();
 
-        u.print(termsCount, documentsCount);
-        s.print(termsCount, documentsCount);
-        vt.print(termsCount, documentsCount);
+        Matrix uk = u.getMatrix(0, termsCount - 1, 0, K - 1);
+        Matrix sk = s.getMatrix(0, K - 1, 0, K - 1);
+        Matrix vtk = vt.getMatrix(0, K - 1, 0, documentsCount - 1);
 
-        int k = 2;
+        Matrix result = q.times(uk).times(sk.inverse());
 
-        Matrix uk = u.getMatrix(0, termsCount - 1, 0, k - 1);
-        Matrix sk = s.getMatrix(0, k - 1, 0, k - 1);
-        Matrix vtk = vt.getMatrix(0, k - 1, 0, documentsCount - 1);
+        for (int i = 0; i < documentsCount; i++) {
+            Matrix d = vtk.getMatrix(0, K - 1, i, i).transpose();
+            System.out.println(cosine(result.getArrayCopy()[0], d.getArrayCopy()[0]));
+        }
+    }
 
-        uk.print(termsCount, documentsCount);
-        sk.print(termsCount, documentsCount);
-        vtk.print(termsCount, documentsCount);
-
-        Matrix result = (q.times(uk)).times(sk);
-
-        result.print(termsCount, documentsCount);
+    public static double cosine(double[] q, double[] d) {
+        double a2 = 0;
+        double b2 = 0;
+        double ab = 0;
+        for (int i = 0; i < K; i++) {
+            ab += (q[i] * d[i]);
+            b2 += (q[i] * q[i]);
+            a2 += (d[i] * d[i]);
+        }
+        return ab / Math.sqrt(a2) / Math.sqrt(b2);
     }
 
     public String[] getArticleIds() {
