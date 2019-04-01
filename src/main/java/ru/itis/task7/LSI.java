@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LSI {
-    private static final int K = 2;
+    private static final int K = 5;
 
     private String[] articleIds;
     private String[] terms;
